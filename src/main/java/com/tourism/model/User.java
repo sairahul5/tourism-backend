@@ -16,4 +16,10 @@ public class User {
     private String password;
     private String role; // ADMIN / HOST / TOURIST / GUIDE
     private String status; // ACTIVE / BANNED
+
+    @Transient
+    private String captchaId;
+
+    @Transient
+    private String captchaAnswer;
 }

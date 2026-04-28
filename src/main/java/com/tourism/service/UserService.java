@@ -23,13 +23,36 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private CaptchaService captchaService;
+
     public User register(User user) {
         user.setStatus("ACTIVE");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repo.save(user);
+        User savedUser = repo.save(user);
+
+        if ("GUIDE".equals(savedUser.getRole())) {
+            com.tourism.model.Guide guide = new com.tourism.model.Guide();
+            guide.setUser(savedUser);
+            guide.setName(savedUser.getName() != null ? savedUser.getName() : "Local Guide");
+            guide.setContact("Update Contact");
+            guide.setLocation("Anywhere");
+            guide.setPricePerHour(20.0); // Default price
+            guide.setWorkHours("9 AM - 5 PM");
+            guide.setDailyLimitHours(8);
+            guide.setAvailable(true);
+            guide.setApproved(true); // Automatically approve to show on Guides page instantly
+            guideRepo.save(guide);
+        }
+
+        return savedUser;
     }
 
     public AuthResponse login(User loginReq) {
+        if (!captchaService.validateCaptcha(loginReq.getCaptchaId(), loginReq.getCaptchaAnswer())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Invalid CAPTCHA");
+        }
+
         Optional<User> user = repo.findByEmail(loginReq.getEmail());
         if(user.isPresent() && passwordEncoder.matches(loginReq.getPassword(), user.get().getPassword())) {
             if ("BANNED".equals(user.get().getStatus())) {

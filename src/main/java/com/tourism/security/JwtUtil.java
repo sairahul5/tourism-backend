@@ -44,7 +44,7 @@ public class JwtUtil {
     }
 
     private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(new Date());// Session storage
     }
 
     public Boolean validateToken(String token, String username) {

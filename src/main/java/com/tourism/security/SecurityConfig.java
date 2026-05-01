@@ -26,7 +26,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .cors(org.springframework.security.config.Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/api/users/login", "/api/users/register", "/api/captcha", "/uploads/**", "/error").permitAll()
+                .requestMatchers("/", "/api/users/login", "/api/users/register", "/api/captcha", "/api/containers/**", "/uploads/**", "/error").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -42,7 +42,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(java.util.Arrays.asList(
             "http://localhost:5173", 
             "http://localhost:3000",
-            "https://tourism-frontend-m8freraq5-rahuls-projects-6385723b.vercel.app"
+            "https://tourism-frontend-m8freraq5-rahuls-projects-6385723b.vercel.app",
+            "https://tourism-frontend-tau.vercel.app"
         ));
         configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
